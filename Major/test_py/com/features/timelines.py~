@@ -1,4 +1,0 @@
-#!/bin/python
-
-def getUserline(uid):
-	get('USERLINE', uid)
