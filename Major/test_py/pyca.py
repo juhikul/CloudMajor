@@ -13,9 +13,9 @@ def addTweet(n) :
 pool = ConnectionPool('Keyspace1')
 tweets = ColumnFamily(pool, 'tweets')
 #insert into tweets (tweet) values ('twwet from code')
-abc = {'tweet': 'this is my tweet through code.'}
-tweets.insert('5',abc)
+#abc = {'tweet': 'this is my tweet through code.'}
+#tweets.insert('5',abc)
 #a = "column_reversed=True"
-print tweets.get('1')
+print tweets.multiget('1','123')
 #addTweet();
 print "tweet added"

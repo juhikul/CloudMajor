@@ -1,0 +1,35 @@
+#!/bin/python
+#!/flask/bin/python
+from flask import Flask, jsonify
+import time
+
+def addUser(emailid, username, pwd) :
+        "add a user to the network"
+        value = {'uid':emailid, 'username':username, 'password':pwd}        
+	try:
+		insert('USERS', emailid, value)
+		insert('USERNAME', username, {'uid':emailid})
+	except:
+		return 0
+	return 1
+
+def addFollowers(followerID, followingID) :
+        "follower and following a user"
+        
+        t = long(time.time() * 1e6)
+        value = {followingID: t}        
+	try:
+		insert('FOLLOWER', followerID, value)
+
+        	value = {followerID: t}        
+        	insert('FOLLOWING', followingID, value)
+	except:
+		return 0
+	return 1
+
+def getFollower(uid) :
+        "list of users followed by uid"
+                
+        
+def getFollowing(uid) :
+        "list of users following uid"
