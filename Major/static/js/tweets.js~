@@ -1,0 +1,136 @@
+$(function() {
+	$("button").click(function(event){
+
+		var v1 =$(this).attr("key");
+		var v2 =$(this).attr("abc");
+		var v3 =$(this).attr("next");
+		if ( v1 != undefined) {
+		      	$( "#" + v1 ).toggle();
+		      	return false;
+		} else if ( v2 != undefined) {
+			alert(v2);
+			$.ajax({ 
+				type: "GET",
+				dataType: "json",
+				url: "http://10.1.97.5:5000/read_thread?id=" + v2,
+				data:"",
+			}).done(function(data) {
+//				alert( "success : " + data['d'] + " : " + data['l'][0] + " : " + data['t']['body']);
+				$("#dialog p").text(data['t']['body']);
+				printJsonKeyValue(data['d'], data['l']);
+				$( "#dialog" ).dialog( "open" );
+				
+			}).fail(function() {
+				alert( "error" );
+			});	  
+		} else if (v3 != undefined) {
+			alert("inside more");
+			var v2 =$(this).attr("next");
+			alert(v2);
+			$.ajax({ 
+				type: "GET",
+				dataType: "json",
+				url: "http://10.1.97.5:5000/home?start=" + v2,
+				data:"",
+			}).done(function(data) {
+	//			alert( "success : " + data['d'] + " : " + data['l'][0] + " : " + data['t']['body']);
+				createTweetString(data['d'],data['l'],data['f'],data['retweet']);
+				
+			}).fail(function() {
+				alert( "error for moew values" );
+			});	  
+
+		}
+	});
+
+	setInterval(function(){
+		checkUpdate();}, 30000);
+
+	$( "#dialog" ).dialog({
+		autoOpen: false,
+		width: 650,
+		show: {
+			effect: "clip",
+			duration: 200
+      		},
+	      	hide: {
+			effect: "clip",
+			duration: 200
+	      	},
+		close: function() {
+			$("#dialog ul").empty();
+		}
+    	});
+
+});
+
+
+function checkUpdate() {
+	//alert("check update");
+	$.ajax({ 
+		type: "GET",
+		dataType: "json",
+		url: "http://10.1.97.5:5000/notification",
+		data:"",
+	}).done(function(data) {
+	//	alert( "count : " + data['count']);
+		if(data['count']>0) {
+			alert("show notification");
+			$("#notification a").text("You have " +data['count'] +" new Tweets");
+			$("#notification").show('1000');
+		}
+	}).fail(function() {
+		alert( "error" );
+	});	  
+
+}
+
+function printJsonKeyValue(dict,list) {
+	
+	var str = '';
+
+	jQuery.each(list, function( i, val ) {
+		if(val==0){
+			str += '<li class="list-group-item"><span style="color:grey"><i>Be the first one to reply</i></span></li>'
+			return false;
+		} else {
+		str += '<li class="list-group-item">' +
+			'<span>' +	dict[val]['user'] + ' : </span><hr>' +
+			'<span>' +	dict[val]['body'] + '</span></li>';
+		}
+	});
+	alert(str);
+	$("#dialog ul").append(str);
+}
+
+
+function createTweetString(tweetdict,list,favlist,retweetdict) {
+	jQuery.each(list, function( i, val ) {
+		key = val.split("!")[0];
+		str='';
+		if (tweetdict[key]['status'] != undefined) {
+			str='<div class="container" style="background:lightgrey"><p>' +
+				tweetdict[key]['user'] + '<a href="{{ url_for("favourite",id=' + key + ') }}" style="float:right">';
+	
+			if (favlist[key] == undefined) {
+				str += '<i class="fa fa-star-o"></i></a></p>'
+			} else {
+				str += '<i class="fa fa-star"></i></a></p>';
+			}
+			
+			if (val.indexOf('!') != -1) {
+				str += '<p style="color:grey;">Retweeted by ' + val.split("!")[1] + ' </p>';
+			}
+
+			str += '<p style="color:grey;"  class="tweets">' + tweetdict[key]['body'] + '</p>';
+			str += '<button class="btn pull-left btn-link btn-xs" class="rep" key=' + key + '>Reply</button>';
+			str += '<span style="float:right"><button class="btn pull-left btn-link btn-xs" abc=' + key +'>' +
+					'<i class="fa fa-search-plus"></i></button> | ';
+		}		
+			
+	});
+
+	$("div.col-md-8").append(str);
+
+}
+

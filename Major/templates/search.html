@@ -1,0 +1,124 @@
+<!doctype html>
+
+<html>
+  <!-- Built with Divshot - http://www.divshot.com -->
+  
+  <head>
+    <title>New Page</title>
+    <meta name="viewport" content="width=device-width">
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootswatch/3.0.0/united/bootstrap.min.css">
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.0.0/css/font-awesome.css">
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+    <script type="text/javascript" src="https://netdna.bootstrapcdn.com/bootstrap/3.0.1/js/bootstrap.min.js"></script>
+  </head>
+  
+  <body>
+    <div class="navbar navbar-default">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span>
+          </button>
+          <a href="#" class="navbar-brand"><i class="fa fa-bug"></i><br></a>
+         <a href="#" class="navbar-brand">Hi {{username}}</a>
+
+	  </div>
+        <div class="collapse navbar-collapse pull-right">
+          <ul class="nav navbar-nav">
+            <li>
+              <a href="home?start=0">Home</a>
+            </li>
+            <li>
+              <a href="me">Me</a>
+            </li>
+            <li class="active">
+              <a href="{{ url_for('search_page')}}">Search</a>
+            </li>
+            <li>
+              <div class="btn-group">
+                <a class="btn btn-default dropdown-toggle" data-toggle="dropdown" href="#"><i class="fa fa-gear fa-lg"></i><br><span class="caret"></span>  </a>
+                <ul class="dropdown-menu">
+                  <li>
+                    <a href="#">My Account</a>
+                  </li>
+                  <li>
+                    <a href="logout">Logout</a>
+                  </li>
+                  <li>
+                    <a href="#">Help</a>
+                  </li>
+                </ul>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <ul class="list-group"></ul>
+    <div class="container">
+      <div class="row">
+        <div class="col-md-4">
+          <form class="form-signin" action="{{url_for('search')}}" method="POST">
+            <input type="text" class="form-control" name="searchtext">
+            <div class="radio">
+              <label>
+                <input type="radio" name="searchtype" value="people" checked=true>By People</label>
+            </div>
+            <div class="radio">
+              <label>
+                <input type="radio" name="searchtype" value="topic">By Topics</label>
+            </div>
+            <button class="btn btn-link btn-lg" type="submit">Search</button>
+          </form><br></div>
+      </div>
+    </div>
+	    <div class="container">
+	      <div class="row">
+		<div class="col-md-4">
+	{% if req=='people'%}
+	{% if d=={} and e=={} %}
+		<p>No result found</p>
+	{% endif %}
+	{% if d != {} %}
+	<p> People in Follower's list : </p>
+            <ul class="list-group">
+		{% for key in d: %}
+              <li class="list-group-item"><a href="{{ url_for('set_other_user',user=d[key],email=key) }}">{{ d[key] }} </a> : {{ key }} </li>
+		{% endfor %}
+            </ul>
+	{% endif %}
+
+	{% if e != {}: %}
+	<p> Others : </p>
+            <ul class="list-group">
+		{% for key in e: %}
+              <li class="list-group-item"><a href="{{ url_for('set_other_user',user=e[key],email=key) }}">{{ e[key] }} </a> : {{ key }} </li>
+		{% endfor %}
+            </ul>
+	{% endif %}
+	{% endif %}
+          </div>
+		</div>
+		</div>
+          <div class="container">
+	      <div class="row">
+		<div class="col-md-4">
+		    <ul class="list-group">
+	{% if req=='topic'%}
+		{% if t=={} %}
+			<p>No result found</p>
+		{% else %}
+			<p>Similar trending topics</p>
+
+		{% for key in t: %}
+              <li class="list-group-item"><a href="{{ url_for('show_trends', topic=key) }}">{{ "#" +key }} </a></li>
+		{% endfor %}
+		{% endif %}
+		{% endif %}
+            </ul>
+          </div>
+	</div>
+	</div>
+  </body>
+
+</html>
